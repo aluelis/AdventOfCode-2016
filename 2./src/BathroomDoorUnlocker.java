@@ -10,9 +10,11 @@ import java.util.List;
 public class BathroomDoorUnlocker {
 
     /*
-    1   2   3
-    4   5   6
-    7   8   9
+            1
+        2   3   4
+    5   6   7   8   9
+        10  11  12
+            13
      */
 
     public static int keypadNumber = 5;
@@ -35,7 +37,24 @@ public class BathroomDoorUnlocker {
 
         System.out.print("Passcode is: ");
         for (Integer aPassCode : passCode) {
-            System.out.print(aPassCode);
+            if (aPassCode > 9) {
+                switch (aPassCode) {
+                    case 10:
+                        System.out.print("A");
+                        break;
+                    case 11:
+                        System.out.print("B");
+                        break;
+                    case 12:
+                        System.out.print("C");
+                        break;
+                    case 13:
+                        System.out.print("D");
+                        break;
+                }
+            } else {
+                System.out.print(aPassCode);
+            }
         }
     }
 
@@ -45,26 +64,33 @@ public class BathroomDoorUnlocker {
                 char c = line.charAt(i);
                 switch (c) {
                     case 'U':
-                        if (keypadNumber > 3) {
-                            keypadNumber -= 3;
+                        if (keypadNumber == 3 || keypadNumber == 13) {
+                            keypadNumber -= 2;
+                            break;
+                        }
+                        if (keypadNumber == 6 || keypadNumber == 7 || keypadNumber == 8 || keypadNumber == 10 || keypadNumber == 11 || keypadNumber == 12) {
+                            keypadNumber -= 4;
+                            break;
+                        }
+                    case 'L':
+                        if (keypadNumber == 3 || keypadNumber == 4 || keypadNumber == 6 || keypadNumber == 7 || keypadNumber == 8 || keypadNumber == 9 || keypadNumber == 11 || keypadNumber == 12) {
+                            keypadNumber -= 1;
                         }
                         break;
-                    case 'L':
-                        if (keypadNumber == 2 || keypadNumber == 3 || keypadNumber == 5 || keypadNumber == 6 || keypadNumber == 8 || keypadNumber == 9) {
-                        keypadNumber -= 1;
-                    }
-                    break;
                     case 'R':
-                        if(keypadNumber == 1 || keypadNumber == 2 || keypadNumber == 4 || keypadNumber == 5 || keypadNumber == 7 ||keypadNumber == 8){
-                        keypadNumber += 1;
-                    }
+                        if (keypadNumber == 2 || keypadNumber == 3 || keypadNumber == 5 || keypadNumber == 6 || keypadNumber == 7 || keypadNumber == 8 || keypadNumber == 10 || keypadNumber == 11) {
+                            keypadNumber += 1;
+                        }
                         break;
                     case 'D':
-                        if (keypadNumber < 7) {
-                            keypadNumber += 3;
+                        if (keypadNumber == 1 || keypadNumber == 11) {
+                            keypadNumber += 2;
+                            break;
+                        }
+                        if (keypadNumber == 2 || keypadNumber == 3 || keypadNumber == 4 || keypadNumber == 6 || keypadNumber == 7 || keypadNumber == 8) {
+                            keypadNumber += 4;
                         }
                         break;
-
                 }
             }
             passCode.add(keypadNumber);

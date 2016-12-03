@@ -1,5 +1,5 @@
 /**
- * Created by szvetlintanyi on 02/12/16.
+ * Created by Svetlin Tanyi on 02/12/16.
  */
 public class Location {
 
