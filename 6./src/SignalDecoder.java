@@ -47,7 +47,6 @@ public class SignalDecoder {
         for (int i = 0; i < verticalArray.length; i++) {
 
             List<Character> characters = verticalArray[i];
-
             Map<Character, Integer> numChars = new HashMap<>(Math.min(characters.size(), 26));
 
             for (int j = 0; j < characters.size(); ++j) {
@@ -60,20 +59,18 @@ public class SignalDecoder {
                 }
             }
 
-            System.out.println(i + ". row " + numChars.toString());
-
-            int maxOccurence = 0;
+            int minOccurence = Integer.MAX_VALUE;
             Set s = numChars.entrySet();
             for (Object value : s) {
                 Map.Entry m = (Map.Entry) value;
-                if ((int) m.getValue() > maxOccurence) {
-                    maxOccurence = (int) m.getValue();
+                if ((int) m.getValue() < minOccurence) {
+                    minOccurence = (int) m.getValue();
                 }
             }
 
             for (Object value : s) {
                 Map.Entry m = (Map.Entry) value;
-                if ((int) m.getValue() == maxOccurence) {
+                if ((int) m.getValue() == minOccurence) {
                     decodedMessage.append(m.getKey());
                 }
             }
