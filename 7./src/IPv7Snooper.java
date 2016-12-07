@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,185 +77,80 @@ public class IPv7Snooper {
         String sbraces3;
         String word4;
 
+        ArrayList<String> words;
+        ArrayList<String> sbraces;
+
         if (m.find()) {
             switch (bracesCount) {
                 case 1:
                     word1 = m.group(1);
                     sbraces1 = m.group(2);
                     word2 = m.group(3);
-                    snoopIPv7(word1, sbraces1, word2);
+                    sbraces1.replace("[", "");
+                    sbraces1.replace("]", "");
+
+                    words = new ArrayList<>(Arrays.asList(word1, word2));
+                    sbraces = new ArrayList<>(Arrays.asList(sbraces1));
+                    snoopIPv7(words, sbraces);
                     break;
                 case 2:
                     word1 = m.group(1);
                     sbraces1 = m.group(2);
+                    sbraces1.replace("[", "");
+                    sbraces1.replace("]", "");
                     word2 = m.group(3);
                     sbraces2 = m.group(4);
+                    sbraces2.replace("[", "");
+                    sbraces2.replace("]", "");
                     word3 = m.group(5);
-                    snoopIPv7(word1, sbraces1, word2, sbraces2, word3);
+
+                    words = new ArrayList<>(Arrays.asList(word1, word2, word3));
+                    sbraces = new ArrayList<>(Arrays.asList(sbraces1, sbraces2));
+                    snoopIPv7(words, sbraces);
                     break;
                 case 3:
                     word1 = m.group(1);
                     sbraces1 = m.group(2);
+                    sbraces1.replace("[", "");
+                    sbraces1.replace("]", "");
                     word2 = m.group(3);
                     sbraces2 = m.group(4);
+                    sbraces2.replace("[", "");
+                    sbraces2.replace("]", "");
                     word3 = m.group(5);
                     sbraces3 = m.group(6);
+                    sbraces3.replace("[", "");
+                    sbraces3.replace("]", "");
                     word4 = m.group(7);
-                    snoopIPv7(word1, sbraces1, word2, sbraces2, word3, sbraces3, word4);
+
+                    words = new ArrayList<>(Arrays.asList(word1, word2, word3, word4));
+                    sbraces = new ArrayList<>(Arrays.asList(sbraces1, sbraces2, sbraces3));
+                    snoopIPv7(words, sbraces);
                     break;
             }
-
         }
     }
 
-    private static void snoopIPv7(String word1, String sbraces1, String word2) {
-        /*
-        * abba
-        * 0. == 3.
-        * 1. == 2.
-        * habababa
-        *
-        *
-        *
-        *
-        *
-        */
-
-
-        for (int i = 0; i < sbraces1.length(); i++) {
-            if (i + 3 < sbraces1.length()) {
-                if (sbraces1.charAt(i) == sbraces1.charAt(i + 3) && sbraces1.charAt(i + 1) == sbraces1.charAt(i + 2) && sbraces1.charAt(i) != sbraces1.charAt(i + 1)) {
-                    return;
+    private static void snoopIPv7(ArrayList<String> words, ArrayList<String> sbraces) {
+        for (String sbrace : sbraces) {
+            for (int i = 0; i < sbrace.length(); i++) {
+                if (i + 3 < sbrace.length()) {
+                    if (sbrace.charAt(i) == sbrace.charAt(i + 3) && sbrace.charAt(i + 1) == sbrace.charAt(i + 2) && sbrace.charAt(i) != sbrace.charAt(i + 1)) {
+                        return;
+                    }
                 }
             }
         }
 
-        for (int i = 0; i < word1.length(); i++) {
-            if (i + 3 < word1.length()) {
-                if (word1.charAt(i) == word1.charAt(i + 3) && word1.charAt(i + 1) == word1.charAt(i + 2) && word1.charAt(i) != word1.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word2.length(); i++) {
-            if (i + 3 < word2.length()) {
-                if (word2.charAt(i) == word2.charAt(i + 3) && word2.charAt(i + 1) == word2.charAt(i + 2) && word2.charAt(i) != word2.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
+        for (String word : words) {
+            for (int i = 0; i < word.length(); i++) {
+                if (i + 3 < word.length()) {
+                    if (word.charAt(i) == word.charAt(i + 3) && word.charAt(i + 1) == word.charAt(i + 2) && word.charAt(i) != word.charAt(i + 1)) {
+                        tlsSupportCount++;
+                        return;
+                    }
                 }
             }
         }
     }
-
-    private static void snoopIPv7(String word1, String sbraces1, String word2, String sbraces2, String word3) {
-
-        for (int i = 0; i < sbraces1.length(); i++) {
-            if (i + 3 < sbraces1.length()) {
-                if (sbraces1.charAt(i) == sbraces1.charAt(i + 3) && sbraces1.charAt(i + 1) == sbraces1.charAt(i + 2) && sbraces1.charAt(i) != sbraces1.charAt(i + 1)) {
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < sbraces2.length(); i++) {
-            if (i + 3 < sbraces2.length()) {
-                if (sbraces2.charAt(i) == sbraces2.charAt(i + 3) && sbraces2.charAt(i + 1) == sbraces2.charAt(i + 2) && sbraces2.charAt(i) != sbraces2.charAt(i + 1)) {
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word1.length(); i++) {
-            if (i + 3 < word1.length()) {
-                if (word1.charAt(i) == word1.charAt(i + 3) && word1.charAt(i + 1) == word1.charAt(i + 2) && word1.charAt(i) != word1.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word2.length(); i++) {
-            if (i + 3 < word2.length()) {
-                if (word2.charAt(i) == word2.charAt(i + 3) && word2.charAt(i + 1) == word2.charAt(i + 2) && word2.charAt(i) != word2.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word3.length(); i++) {
-            if (i + 3 < word3.length()) {
-                if (word3.charAt(i) == word3.charAt(i + 3) && word3.charAt(i + 1) == word3.charAt(i + 2) && word3.charAt(i) != word3.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-    }
-
-    private static void snoopIPv7(String word1, String sbraces1, String word2, String sbraces2, String word3, String sbraces3, String word4) {
-
-        for (int i = 0; i < sbraces1.length(); i++) {
-            if (i + 3 < sbraces1.length()) {
-                if (sbraces1.charAt(i) == sbraces1.charAt(i + 3) && sbraces1.charAt(i + 1) == sbraces1.charAt(i + 2) && sbraces1.charAt(i) != sbraces1.charAt(i + 1)) {
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < sbraces2.length(); i++) {
-            if (i + 3 < sbraces2.length()) {
-                if (sbraces2.charAt(i) == sbraces2.charAt(i + 3) && sbraces2.charAt(i + 1) == sbraces2.charAt(i + 2) && sbraces2.charAt(i) != sbraces2.charAt(i + 1)) {
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < sbraces3.length(); i++) {
-            if (i + 3 < sbraces3.length()) {
-                if (sbraces3.charAt(i) == sbraces3.charAt(i + 3) && sbraces3.charAt(i + 1) == sbraces3.charAt(i + 2) && sbraces3.charAt(i) != sbraces3.charAt(i + 1)) {
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word1.length(); i++) {
-            if (i + 3 < word1.length()) {
-                if (word1.charAt(i) == word1.charAt(i + 3) && word1.charAt(i + 1) == word1.charAt(i + 2) && word1.charAt(i) != word1.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word2.length(); i++) {
-            if (i + 3 < word2.length()) {
-                if (word2.charAt(i) == word2.charAt(i + 3) && word2.charAt(i + 1) == word2.charAt(i + 2) && word2.charAt(i) != word2.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word3.length(); i++) {
-            if (i + 3 < word3.length()) {
-                if (word3.charAt(i) == word3.charAt(i + 3) && word3.charAt(i + 1) == word3.charAt(i + 2) && word3.charAt(i) != word3.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i < word4.length(); i++) {
-            if (i + 3 < word4.length()) {
-                if (word4.charAt(i) == word4.charAt(i + 3) && word4.charAt(i + 1) == word4.charAt(i + 2) && word4.charAt(i) != word4.charAt(i + 1)) {
-                    tlsSupportCount++;
-                    return;
-                }
-            }
-        }
-    }
-
 }
