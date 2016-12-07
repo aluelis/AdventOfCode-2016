@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,7 +90,7 @@ public class IPv7Snooper {
                     sbraces1 = m.group(2);
                     word2 = m.group(3);
                     words = new ArrayList<>(Arrays.asList(word1, word2));
-                    sbraces = new ArrayList<>(Arrays.asList(sbraces1));
+                    sbraces = new ArrayList<>(Collections.singletonList(sbraces1));
                     snoopIPv7_TLS(words, sbraces);
                     snoopIPv7_SSL(words, sbraces);
 
@@ -125,14 +126,12 @@ public class IPv7Snooper {
     }
 
     private static void snoopIPv7_SSL(ArrayList<String> words, ArrayList<String> sbraces) {
-        for (int i = 0; i < words.size(); i++) {
-            String word = words.get(i);
+        for (String word : words) {
             for (int j = 0; j < word.length(); j++) {
                 if (j + 2 < word.length()) {
                     if (word.charAt(j) == word.charAt(j + 2) && word.charAt(j) != word.charAt(j + 1)) {
-                        String bab = new StringBuilder().append("").append(word.charAt(j + 1)).append(word.charAt(j)).append(word.charAt(j + 1)).toString();
-                        for (int k = 0; k < sbraces.size(); k++) {
-                            String sbrace = sbraces.get(k);
+                        String bab = "" + word.charAt(j + 1) + word.charAt(j) + word.charAt(j + 1);
+                        for (String sbrace : sbraces) {
                             if (sbrace.contains(bab)) {
                                 sslSupportCount++;
                                 return;
