@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public class IPv7Snooper {
 
     public static int tlsSupportCount = 0;
+    public static int sslSupportCount = 0;
 
     public static void main(String[] args) {
 
@@ -40,6 +41,7 @@ public class IPv7Snooper {
         }
 
         System.out.println("The number of IPv7 addresses that support TLS: " + tlsSupportCount);
+        System.out.println("The number of IPv7 addresses that support SSL: " + sslSupportCount);
     }
 
     private static void digestLine(String line, int bracesCount) throws Exception {
@@ -86,52 +88,63 @@ public class IPv7Snooper {
                     word1 = m.group(1);
                     sbraces1 = m.group(2);
                     word2 = m.group(3);
-                    sbraces1.replace("[", "");
-                    sbraces1.replace("]", "");
-
                     words = new ArrayList<>(Arrays.asList(word1, word2));
                     sbraces = new ArrayList<>(Arrays.asList(sbraces1));
-                    snoopIPv7(words, sbraces);
+                    snoopIPv7_TLS(words, sbraces);
+                    snoopIPv7_SSL(words, sbraces);
+
                     break;
                 case 2:
                     word1 = m.group(1);
                     sbraces1 = m.group(2);
-                    sbraces1.replace("[", "");
-                    sbraces1.replace("]", "");
                     word2 = m.group(3);
                     sbraces2 = m.group(4);
-                    sbraces2.replace("[", "");
-                    sbraces2.replace("]", "");
                     word3 = m.group(5);
 
                     words = new ArrayList<>(Arrays.asList(word1, word2, word3));
                     sbraces = new ArrayList<>(Arrays.asList(sbraces1, sbraces2));
-                    snoopIPv7(words, sbraces);
+                    snoopIPv7_TLS(words, sbraces);
+                    snoopIPv7_SSL(words, sbraces);
                     break;
                 case 3:
                     word1 = m.group(1);
                     sbraces1 = m.group(2);
-                    sbraces1.replace("[", "");
-                    sbraces1.replace("]", "");
                     word2 = m.group(3);
                     sbraces2 = m.group(4);
-                    sbraces2.replace("[", "");
-                    sbraces2.replace("]", "");
                     word3 = m.group(5);
                     sbraces3 = m.group(6);
-                    sbraces3.replace("[", "");
-                    sbraces3.replace("]", "");
                     word4 = m.group(7);
 
                     words = new ArrayList<>(Arrays.asList(word1, word2, word3, word4));
                     sbraces = new ArrayList<>(Arrays.asList(sbraces1, sbraces2, sbraces3));
-                    snoopIPv7(words, sbraces);
+                    snoopIPv7_TLS(words, sbraces);
+                    snoopIPv7_SSL(words, sbraces);
                     break;
             }
         }
     }
 
-    private static void snoopIPv7(ArrayList<String> words, ArrayList<String> sbraces) {
+    private static void snoopIPv7_SSL(ArrayList<String> words, ArrayList<String> sbraces) {
+        for (int i = 0; i < words.size(); i++) {
+            String word = words.get(i);
+            for (int j = 0; j < word.length(); j++) {
+                if (j + 2 < word.length()) {
+                    if (word.charAt(j) == word.charAt(j + 2) && word.charAt(j) != word.charAt(j + 1)) {
+                        String bab = new StringBuilder().append("").append(word.charAt(j + 1)).append(word.charAt(j)).append(word.charAt(j + 1)).toString();
+                        for (int k = 0; k < sbraces.size(); k++) {
+                            String sbrace = sbraces.get(k);
+                            if (sbrace.contains(bab)) {
+                                sslSupportCount++;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void snoopIPv7_TLS(ArrayList<String> words, ArrayList<String> sbraces) {
         for (String sbrace : sbraces) {
             for (int i = 0; i < sbrace.length(); i++) {
                 if (i + 3 < sbrace.length()) {
