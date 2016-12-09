@@ -9,8 +9,6 @@ import java.util.regex.Pattern;
  */
 public class DataDecompresser {
 
-    public static int decompressedLength = 0;
-
     public static void main(String[] args) {
         String read, line;
         String filename = args[0];
@@ -19,20 +17,16 @@ public class DataDecompresser {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             while ((read = bufferedReader.readLine()) != null) {
                 line = read;
-                digestLine(line);
+                System.out.println("The files decompressed length is: " + digestLine(line));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("The files decompressed length is: " + decompressedLength);
-
     }
 
-    private static void digestLine(String line) {
-        int positionCounter = 0;
-        while (positionCounter != line.length()) {
-            System.out.println(line.length());
+    private static long digestLine(String line) {
+        long decompressedSize = 0;
+        while (0 != line.length()) {
 
             String re1 = ".*?";    // Non-greedy match on filler
             String re2 = "(\\d+)";    // Integer Number 1
@@ -42,28 +36,37 @@ public class DataDecompresser {
             Pattern p = Pattern.compile(re1 + re2 + re3 + re4, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
             Matcher m = p.matcher(line);
             if (m.find()) {
-                int int1 = Integer.parseInt(m.group(1));
-                int int2 = Integer.parseInt(m.group(2));
-                decompressedLength += int1 * int2;
-                String tmp = "(" + int1 + "x" + int2 + ")";
-                int tmpCount = tmp.length();
-                line = line.substring(tmpCount);
-                line = line.substring(int1);
-            }
+                int int1 = Integer.parseInt(m.group(1)); //length of the next sequence
+                int int2 = Integer.parseInt(m.group(2)); //repeat int2 times
 
-            int charactersToBrace = 0;
-            for (int i = 0; i < line.length(); i++) {
-                if (line.charAt(i) == '(') {
-                    break;
-                } else {
-                    charactersToBrace++;
+                int charactersToBrace = 0;
+                for (int i = 0; i < line.length(); i++) {
+                    if (line.charAt(i) == '(') {
+                        break;
+                    } else {
+                        charactersToBrace++;
+                    }
                 }
+                decompressedSize += charactersToBrace;
+                line = line.substring(charactersToBrace);
+
+                String currentMarker = "(" + int1 + "x" + int2 + ")";
+                line = line.substring(currentMarker.length());
+
+                String nextSequence = line.substring(0, int1);
+                line = line.substring(int1);
+
+                if (nextSequence.contains("(")) {
+                    decompressedSize += digestLine(nextSequence) * int2;
+                } else {
+                    decompressedSize += nextSequence.length() * int2;
+                }
+
+            } else {
+                decompressedSize += line.length();
+                line = "";
             }
-
-            decompressedLength += charactersToBrace;
-
-            line = line.substring(charactersToBrace);
         }
-
+        return decompressedSize;
     }
 }
